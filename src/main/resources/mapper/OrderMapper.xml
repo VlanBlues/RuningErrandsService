@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lan.running.mapper.OrderMapper">
+    <resultMap id="unfinishedOrdersMap" type="com.lan.running.bean.Orders">
+        <id property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="objective" column="objective"/>
+        <result property="addressId" column="address_id"/>
+        <result property="money" column="money"/>
+        <result property="originatorId" column="originator_id"/>
+        <result property="recipientId" column="recipient_id"/>
+        <result property="originatorTime" column="originator_time"/>
+        <result property="recipientTime" column="recipient_time"/>
+        <result property="originatorState" column="originator_state"/>
+        <result property="recipientState" column="recipient_state"/>
+        
+        <result property="user.id" column="uid"/>
+        <result property="user.username" column="username"/>
+        <!--<result property="user.password" column="password"/>-->
+        <result property="user.tel" column="tel"/>
+        <!--<result property="user.email" column="email"/>-->
+        <result property="user.sex" column="sex"/>
+        <result property="user.img" column="img"/>
+        <result property="user.autograph" column="autograph"/>
+    </resultMap>
+    
+    
+    <insert id="addOrderByOriginator">
+        insert into 
+        orders(type,objective,address_id,money,originator_id,originator_time,originator_state)
+        values (#{type},#{objective},#{addressId},#{money},#{originatorId},#{originatorTime},#{originatorState})
+    </insert>
+    <update id="acceptOrder">
+        update orders 
+        set recipient_id=#{recipientId},recipient_time =#{recipientTime},
+            recipient_state=#{recipientState}
+        where id=#{id}
+    </update>
+    <update id="originatorComplete">
+        update orders
+        set originator_state=#{originatorState},completion_time=#{completionTime}
+        where id=#{id}
+    </update>
+    <update id="recipientComplete">
+        update orders
+        set recipient_state=#{recipientState}
+        where id=#{id}
+    </update>
+    
+    <select id="getUnfinishedOrders" resultMap="unfinishedOrdersMap">
+        select user.id uid,user.username,user.tel,user.sex,user.img,orders.*
+        from user join orders 
+        on user.id = orders.originator_id
+        where
+        <if test="text !=null and text!= ''">
+            user.username like CONCAT('%',#{text},'%') or
+            orders.objective like CONCAT('%',#{text},'%') and
+        </if>
+        <if test="type !=null and type != ''">
+            orders.type =#{type} and
+        </if>
+            orders.recipient_state = #{unfinished}
+    </select>
+    <select id="getFBOrdersByUid" resultMap="unfinishedOrdersMap">
+        select user.id uid,user.username,user.tel,user.sex,user.img,orders.*
+        from user join orders
+        on user.id = orders.originator_id
+        where orders.originator_id = #{id}
+    </select>
+    <select id="getJSOrdersByUid" resultMap="unfinishedOrdersMap">
+        select user.id uid,user.username,user.tel,user.sex,user.img,orders.*
+        from user join orders
+        on user.id = orders.originator_id
+        where orders.recipient_id = #{id}
+    </select>
+</mapper>

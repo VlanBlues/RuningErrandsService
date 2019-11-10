@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lan.running.mapper.AddressMapper">
+    <insert id="addAddress">
+        insert into address(name,tel,address,address_detail,area_code,is_default,uid)
+        values (#{name},#{tel},#{address},#{addressDetail},#{areaCode},#{isDefault},#{uid})
+    </insert>
+    <update id="upAddrDefault">
+        update address set is_default=#{value} where id=#{id}
+    </update>
+    <delete id="delAddrById">
+        delete from address where id=#{id}
+    </delete>
+
+    <select id="getAllAddr" resultType="com.lan.running.bean.Address">
+        select * from address
+    </select>
+    <select id="getAddrByUId" resultType="com.lan.running.bean.Address">
+        select * from address where uid=#{id}
+    </select>
+    
+    <select id="getAddrById" resultType="com.lan.running.bean.Address">
+        select * from address where id=#{id}
+    </select>
+</mapper>

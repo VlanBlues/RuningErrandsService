@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lan.running.mapper.LogMapper">
+
+    <insert id="addLog">
+        insert into 
+            log(uid, username, time, behavior) 
+        values 
+            (#{uid},#{username},#{time},#{behavior})
+    </insert>
+    <select id="getLogs" resultType="com.lan.running.bean.Log">
+        select * from log
+    </select>
+    
+    <select id="getAllLoginLogs" resultType="java.lang.Integer">
+        select count(*) from log
+        where behavior=#{type}
+    </select>
+    <select id="getYesterdayLoginLogs" resultType="java.lang.Integer">
+        select count(*) from log
+        where behavior = #{type} 
+        and TO_DAYS(NOW()) - TO_DAYS(time) = 1
+    </select>
+    <select id="getTodayLoginLogs" resultType="java.lang.Integer">
+        select count(*) from log
+        where behavior = #{type}
+        and TO_DAYS(NOW()) = TO_DAYS(time)
+    </select>
+    <select id="getSevenDaysLogs" resultType="java.lang.Integer">
+        select count(*) from log
+        where behavior = #{type}
+        and DATE_SUB(CURDATE(), INTERVAL 7 DAY) <![CDATA[<=date(time)]]>
+    </select>
+    <select id="getThirtyDaysLogs" resultType="java.lang.Integer">
+        select count(*) from log
+        where behavior = #{type}
+        and DATE_SUB(CURDATE(), INTERVAL 30 DAY) <![CDATA[<=date(time)]]>
+    </select>
+</mapper>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>后台登录</title>
+		<!-- Bootstrap core CSS -->
+		<link href="/asserts/css/bootstrap.min.css" rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link href="/asserts/css/signin.css" rel="stylesheet">
+		<link rel="stylesheet" href="/layui/css/layui.css">
+		
+	</head>
+
+	<body class="text-center">
+		<form class="form-signin" id="adminInfo" onsubmit="return false">
+			<img class="mb-4" src="/asserts/img/logo1.png" alt="" width="80" height="80">
+			<h1 class="h3 mb-3 font-weight-normal">请登录</h1>
+			<div>
+				<label class="sr-only">用户名</label>
+				<input type="text" id="name" name="name" class="form-control" placeholder="name" required="" autofocus="">
+			</div>
+			<div style="margin-top: 10px">
+				<label class="sr-only">密码</label>
+				<input type="password" id="pass" name="pass" class="form-control" placeholder="pass" required="" autofocus="">
+			</div>
+			<div class="checkbox mb-3">
+				<label>
+          <!--<input type="checkbox" value="remember-me"> Remember me-->
+        </label>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit" id="saveAdminInfo">登录</button>
+			<!--<p class="mt-5 mb-3 text-muted">© 2017-2018</p>-->
+		</form>
+
+	<script src="/layui/jquery-1.12.4.js"></script>
+	<script src="/layui/layui.js"></script>
+	<script>
+        layui.use('layer', function(){
+            var layer = layui.layer;
+        });
+        $("#saveAdminInfo").click(function() {
+            $.ajax({
+                type:"get",
+                url:"admin/login",
+                data: {
+                    name:$("#name").val(),
+					pass:$("#pass").val()
+				},
+                success:function(data){
+                    console.log(data);
+                    if (data === 0){
+                        layer.msg("用户名或密码输入错误！！！", {
+                            time: 2000 //20s后自动关闭
+                        });
+					}else {
+                        window.location.href = "/admin/main";
+					}
+                },
+                error:function(e){
+                    layer.msg("无法连接服务器", {
+                        time: 2000 //20s后自动关闭
+                    });
+                }
+            });
+        });
+	</script>
+	</body>
+
+</html>

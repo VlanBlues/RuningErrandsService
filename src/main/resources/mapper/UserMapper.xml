@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lan.running.mapper.UserMapper">
+    <insert id="addUser">
+        insert into user(username,password,tel,email,sex,register_time,autograph)
+        values (#{username},#{password},#{tel},#{email},#{sex},#{registerTime},#{autograph})
+    </insert>
+    <update id="updatePass">
+        update user set password=#{password} where email=#{email}
+    </update>
+    <update id="upUserById">
+        update user set 
+        <if test="password !=null and password != ''">
+            password = #{password},
+        </if>
+        <if test="sex != null and sex != ''">
+            sex = #{sex},
+        </if>
+        username=#{username},tel=#{tel},
+        email=#{email},autograph=#{autograph} where id=#{id}
+    </update>
+    <update id="upUserImg">
+        update user set img=#{img} where id=#{id}
+    </update>
+    <delete id="delUserById">
+        delete from user where id = #{id}
+    </delete>
+
+    <select id="getAllUser" resultType="com.lan.running.bean.User">
+        select * from user 
+    </select>
+    <select id="getUserByTel" resultType="com.lan.running.bean.User">
+        select * from user where tel=#{tel}
+    </select>
+    <select id="getUserById" resultType="com.lan.running.bean.User">
+        select * from user where id=#{id}
+    </select>
+    <select id="getUserByEmail" resultType="com.lan.running.bean.User">
+        select * from user where email=#{email}
+    </select>
+</mapper>
