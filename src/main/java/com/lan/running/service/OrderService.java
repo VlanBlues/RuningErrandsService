@@ -1,6 +1,7 @@
 package com.lan.running.service;
 
 import com.lan.running.bean.Orders;
+import com.lan.running.bean.OrdersAnalysis;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,8 @@ public interface OrderService {
     int addOrderByOriginator(Orders orders);
 
     List getUnfinishedOrders();
+
+    Map<String,Object> getAllOrders(Integer page,Integer limit);
     
     List getUnfinishedSearchOrders(String type,String text);
 
@@ -27,4 +30,8 @@ public interface OrderService {
     int originatorComplete(Orders orders);
 
     int recipientComplete(Orders orders);
+
+    int delByOrdersId(int id);
+
+    List getOrdersAnalysis();
 }

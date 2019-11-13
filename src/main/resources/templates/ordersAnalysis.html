@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>后台管理</title>
     <link rel="stylesheet" href="/layui/css/layui.css">
+
 </head>
-<body style="width: 100%;height: 100%;">
-<div id="main" style="width: 100%;height: 600px;margin:0 auto"></div>
+<body >
+<div >
+    <div id="main" style="width: 100%;height: 600px"></div>
+</div>
 
 <script src="/layui/layui.js"></script>
 <script src="/layui/jquery-1.12.4.js"></script>
@@ -18,50 +21,53 @@
     var myChart = echarts.init(document.getElementById('main'));
 
     option = {
-        title : {
-            text: '用户访问数据分析',
-            subtext: '校园跑腿APP',
-            x:'center'
-        },
         tooltip : {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
+            trigger: 'axis',
+
         },
         legend: {
-            orient: 'vertical',
-            left: 'left',
-            data: ['总访问量','前三十天访问量','前七天访问量','前一天访问量','今日访问量']
+            data:['发出订单','完成订单']
         },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis : [
+            {
+                type : 'category',
+                data : ['周一','周二','周三','周四','周五','周六','周日','周一','周二','周三','周四','周五','周六','周日','周一']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
         series : [
             {
-                name: '访问来源',
-                type: 'pie',
-                radius : '55%',
-                center: ['50%', '60%'],
-                data:[
-                    /*{value:335, name:'直接访问'},
-                    {value:310, name:'邮件营销'},
-                    {value:234, name:'联盟广告'},
-                    {value:135, name:'视频广告'},
-                    {value:1548, name:'搜索引擎'}*/
-                ],
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
+                name:'发出订单',
+                type:'bar',
+                data:[320, 332, 301, 334, 390, 330, 320,330, 332, 301, 334, 390, 330, 320,330]
+            },
+            {
+                name:'完成订单',
+                type:'bar',
+                stack: '广告',
+                data:[120, 132, 101, 134, 90, 230, 210,220, 332, 301, 334, 390, 330, 320,330]
             }
         ]
     };
     $.ajax({
         type:"get",
-        url:"/log/logAnalysis",
+        url:"/order/ordersAnalysis",
         data: {
         },
         success:function(data){
-            option.series[0].data = data;
+            option.series[0].data = data[0];
+            option.series[1].data = data[1];
+            option.xAxis[0].data = data[2];
             myChart.setOption(option);
         },
         error:function(e){
@@ -70,9 +76,7 @@
             });
         }
     });
-     
-
-    // 使用刚指定的配置项和数据显示图表。
+    // myChart.setOption(option);
     
 </script>
 <script>

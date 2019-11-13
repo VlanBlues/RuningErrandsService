@@ -1,6 +1,7 @@
 package com.lan.running.controller;
 
 import com.lan.running.bean.Orders;
+import com.lan.running.bean.OrdersAnalysis;
 import com.lan.running.service.OrderService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,12 @@ public class OrderController {
     @RequestMapping("/get_no_orders")
     public List getUnfinishedOrders(){
         return orderService.getUnfinishedOrders();
+    }
+
+    //获取所有的订单
+    @RequestMapping("/get_all_orders")
+    public Map<String,Object> getAllOrders(Integer page,Integer limit){
+        return orderService.getAllOrders(page,limit);
     }
 
     //获取所有未接受快递或跑腿的订单
@@ -69,5 +76,17 @@ public class OrderController {
     @RequestMapping("/recipient_up")
     public int recipientComplete(Orders orders) {
         return orderService.recipientComplete(orders);
+    }
+
+    //通过订单id删除
+    @RequestMapping("/del_by_id")
+    public int delByOrdersId(int id) {
+        return orderService.delByOrdersId(id);
+    }
+
+    //
+    @RequestMapping("/ordersAnalysis")
+    public List ordersAnalysis() {
+        return orderService.getOrdersAnalysis();
     }
 }

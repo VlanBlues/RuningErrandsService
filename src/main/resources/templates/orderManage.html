@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台管理</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <div class="table1">
+        <table class="layui-table" lay-data="{url:'/order/get_all_orders', page:true, id:'idTest'}" lay-filter="demo">
+            <thead>
+            <tr>
+                <th lay-data="{field:'id', sort: true, fixed: true,width:80}">ID</th>
+                <th lay-data="{field:'type',width:100}">类型</th>
+                <th lay-data="{field:'originatorName',width:100}">发布者</th>
+                <th lay-data="{field:'objective',width:200 }">要求</th>
+                <th lay-data="{field:'originatorTime',width:160 }">发布时间</th>
+                <th lay-data="{field:'recipientName',width:100 }">接受者</th>
+                <th lay-data="{field:'recipientTime',width:160 }">接受时间</th>
+                <th lay-data="{field:'originatorState',width:100 }">发布状态</th>
+                <th lay-data="{field:'recipientState' }">接受状态</th>
+                <th lay-data="{fixed: 'right', align:'center', toolbar: '#barDemo'}">操作</th>
+            </tr>
+            </thead>
+        </table>
+
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+    </div>
+</div>
+
+
+<script src="/layui/layui.js"></script>
+<!--<script src="/layui/jquery-1.12.4.js"></script>-->
+<script>
+    layui.use(['table','element'], function(){
+        var table = layui.table
+        ,layer = layui.layer
+        ,$=layui.$,element = layui.element;
+        var index;
+        //监听工具条
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                layer.msg('ID：'+ data.id + ' 的查看操作');
+            } else if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    $.ajax({
+                        type: "POST",
+                        url: "/order/del_by_id",
+                        data: {id:data.id},
+                        success: function(msg){
+                            layer.msg('用户名为：'+ data.username + ' 删除成功');
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                
+            }
+        });
+        
+        
+    });
+</script>
+</body>
+</html>

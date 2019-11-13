@@ -1,6 +1,7 @@
 package com.lan.running.mapper;
 
 import com.lan.running.bean.Orders;
+import com.lan.running.bean.OrdersAnalysis;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
@@ -16,6 +17,8 @@ public interface OrderMapper {
     
     List getUnfinishedOrders(@Param("unfinished") String unfinished,@Param("type") String type,@Param("text") String text);
     
+    List<Orders> getAllOrders();
+    
     List getFBOrdersByUid(@Param("id") int id);
     
     List getJSOrdersByUid(@Param("id") int id);
@@ -25,4 +28,10 @@ public interface OrderMapper {
     int originatorComplete(Orders orders);
     
     int recipientComplete(Orders orders);
+    
+    int delByOrdersId(int id);
+    
+    Orders getOrderById(int id);
+    
+    List<OrdersAnalysis> getOrdersAnalysis();
 }

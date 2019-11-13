@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -38,6 +37,11 @@ public class AdminController {
     public String main(){
         return "main";
     }
+
+    @RequestMapping("/userManage")
+    public String userManage(){
+        return "userManage";
+    }
     
     @RequestMapping("/log")
     public String logPage(){
@@ -48,5 +52,20 @@ public class AdminController {
     public String getUserAnalysis(){
         return "userAnalysis";
     }
+
+    @RequestMapping("/ordersAnalysis")
+    public String getOrdersAnalysis(){
+        return "ordersAnalysis";
+    }
+
+    @RequestMapping("/ordersManage")
+    public String getOrdersManage(){
+        return "orderManage";
+    }
+
+    /*@RequestMapping("/main1")
+    public String main1(){
+        return "main1";
+    }*/
     
 }

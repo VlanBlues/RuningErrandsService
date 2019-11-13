@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台管理</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <div class=" table1">
+        <button type="button" class="layui-btn" id="addUser" style="margin-top: 10px;margin-left: 5px;">增加</button>
+        <table class="layui-table" lay-data="{url:'/user/allMap', page:true, id:'idTest'}" lay-filter="demo">
+            <thead>
+            <tr>
+                <th lay-data="{field:'id', sort: true, fixed: true,width:80}">ID</th>
+                <th lay-data="{field:'username',width:140}">用户名</th>
+                <th lay-data="{field:'password',width:140 }">密码</th>
+                <th lay-data="{field:'email' }">邮箱</th>
+                <th lay-data="{field:'tel',width:120 }">电话</th>
+                <th lay-data="{field:'sex',width:80 }">性别</th>
+                
+                <th lay-data="{field:'autograph' }">个性签名</th>
+                <th lay-data="{fixed: 'right', align:'center', toolbar: '#barDemo'}">操作</th>
+            </tr>
+            </thead>
+        </table>
+
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+    </div>
+</div>
+
+<form class="layui-form" id="editUser" style="display: none;" action="" lay-filter="example" method="post" onsubmit="return false">
+    <div class="layui-form-item" style="margin-top: 10px" id="userId">
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-block">
+            <input disabled type="text" id="id"  name="id" autocomplete="off" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" id="userNameInput">
+        <label class="layui-form-label" >用户名</label>
+        <div class="layui-input-block">
+            <input type="text" id="username" lay-filter="username" name="username" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="text" id="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-block">
+            <input type="text" id="email" name="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">电话</label>
+        <div class="layui-input-block">
+            <input type="text" id="tel" name="tel" placeholder="请输入电话" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div >
+        <label class="layui-form-label">单选框</label>
+        <input type="radio" name="sex" value="man" title="男" id="man">
+        <input type="radio" name="sex" value="women" title="女" id="women">
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">文本域</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea" name="desc" id="autograph"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block" >
+            <button type="submit" class="layui-btn"  lay-filter="demo1" id="submitUp">立即提交</button>
+        </div>
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn"  lay-filter="demo1" id="submitAdd">立即提交</button>
+        </div>
+    </div>
+</form>
+<script src="/layui/layui.js"></script>
+<!--<script src="/layui/jquery-1.12.4.js"></script>-->
+<script>
+    layui.use(['table','element'], function(){
+        var table = layui.table
+        ,layer = layui.layer
+        ,$=layui.$,element = layui.element;
+        var index;
+        //监听工具条
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                layer.msg('ID：'+ data.id + ' 的查看操作');
+            } else if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    $.ajax({
+                        type: "POST",
+                        url: "/user/del",
+                        data: {id:data.id},
+                        success: function(msg){
+                            if(msg === 1){
+                                layer.msg(' 删除成功');
+                            }else {
+                                layer.msg(' 删除失败');
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                 // layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                $("#userId").show();
+                $("#submitUp").show();
+                $("#submitAdd").hide();
+                index = layer.open({
+                    type : 1,
+                    title : "信息更新",
+                    area : [ '800px', '550px' ],
+                    content : $("#editUser")//引用的弹出层的页面层的方式加载修改界面表单
+                });
+                $("#id").val(data.id);
+                $("#username").val(data.username);
+                $("#password").val(data.password);
+                $("#email").val(data.email);
+                $("#tel").val(data.tel);
+                $("#autograph").val(data.autograph);
+                var sta;
+                if(data.sex === '男'){
+                    sta = 'man';   
+                }else {
+                    sta = 'women';
+                }
+                var radio = document.getElementsByName("sex");
+                var radioLength = radio.length;
+                for (var i = 0; i < radioLength; i++) {
+                    if(sta === radio[i].value){
+                        $(radio[i]).next().click();
+                    }
+                }
+                // $("#editUser").attr("action","/user/update");
+            }
+        });
+        $('#submitUp').click(function () {
+            $.ajax({
+                type:"get",
+                url:"/user/update_user",
+                data: {
+                    id:$('#id').val(),
+                    username: $('#username').val(),
+                    password:$('#password').val(),
+                    email:$('#email').val(),
+                    tel:$('#tel').val(),
+                    autograph:$('#autograph').val(),
+                    sex:$("input[type='radio']:checked").val() ==='man'?"男":"女"
+                },
+                success:function(data){
+                    layer.msg('修改成功');
+                    layer.close(index);
+                    window.location.reload();
+                },
+                error:function(e){
+                    layer.msg("无法连接服务器", {
+                        time: 2000 //20s后自动关闭
+                    });
+                }
+            });
+
+
+        });
+
+        // var $ = layui.$;
+        
+        $("#addUser").click(function () {
+            $("#userId").hide();
+            $("#submitUp").hide();
+            $("#submitAdd").show();
+            $("#submitAdd").css({"margin-top":"-36px"});
+            $("#userNameInput").css({"margin-top":"10px"});
+            $("#username").val('');
+            $("#password").val('');
+            $("#email").val('');
+            $("#tel").val('');
+            $("#autograph").val('');
+            layer.open({
+                type : 1,
+                title : "用户添加",
+                area : [ '700px', '500px' ],
+                content : $("#editUser")//引用的弹出层的页面层的方式加载修改界面表单
+            });
+        });
+        
+        $('#submitAdd').click(function () {
+            $.ajax({
+                type:"get",
+                url:"/user/register",
+                data: {
+                    id:$('#id').val(),
+                    username: $('#username').val(),
+                    password:$('#password').val(),
+                    email:$('#email').val(),
+                    tel:$('#tel').val(),
+                    autograph:$('#autograph').val(),
+                    sex:$("input[type='radio']:checked").val() ==='man'?"男":"女"
+                },
+                success:function(data){
+                    layer.msg('添加成功');
+                    layer.close(index);
+                    window.location.reload();
+                },
+                error:function(e){
+                    layer.msg("无法连接服务器", {
+                        time: 2000 //20s后自动关闭
+                    });
+                }
+            });
+
+
+        });
+    });
+</script>
+</body>
+</html>

@@ -19,6 +19,24 @@ public class Orders implements Serializable {
     private String originatorState;
     private String recipientState;
     private String completionTime;
+    private String originatorName;
+    private String recipientName;
+
+    public String getOriginatorName() {
+        return originatorName;
+    }
+
+    public void setOriginatorName(String originatorName) {
+        this.originatorName = originatorName;
+    }
+
+    public String getRecipientName() {
+        return recipientName;
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
+    }
 
     public String getCompletionTime() {
         return completionTime;

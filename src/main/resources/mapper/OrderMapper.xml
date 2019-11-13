@@ -46,7 +46,11 @@
         set recipient_state=#{recipientState}
         where id=#{id}
     </update>
-    
+    <delete id="delByOrdersId">
+        delete from orders
+        where id = #{id}
+    </delete>
+
     <select id="getUnfinishedOrders" resultMap="unfinishedOrdersMap">
         select user.id uid,user.username,user.tel,user.sex,user.img,orders.*
         from user join orders 
@@ -73,4 +77,18 @@
         on user.id = orders.originator_id
         where orders.recipient_id = #{id}
     </select>
+    <select id="getAllOrders" resultType="com.lan.running.bean.Orders">
+        select * from orders
+    </select>
+    <select id="getOrderById" resultType="com.lan.running.bean.Orders">
+        select * from orders
+        where id=#{id}
+    </select>
+    <select id="getOrdersAnalysis" resultType="com.lan.running.bean.OrdersAnalysis">
+        SELECT count(*) total,COUNT(completion_time) finish,DATE_FORMAT(originator_time,'%Y-%m-%d') time
+        FROM orders
+        where DATE_SUB(CURDATE(), INTERVAL 30 DAY) <![CDATA[<=date(originator_time)]]>
+        GROUP BY time
+    </select>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.lan.running.service.impl;
 
 import com.lan.running.bean.Orders;
+import com.lan.running.bean.OrdersAnalysis;
 import com.lan.running.bean.User;
 import com.lan.running.mapper.LogMapper;
 import com.lan.running.mapper.OrderMapper;
@@ -8,6 +9,7 @@ import com.lan.running.mapper.UserMapper;
 import com.lan.running.service.OrderService;
 import com.lan.running.util.DateUtil;
 import com.lan.running.util.LogUtil;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -45,6 +47,32 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.getUnfinishedOrders("未接单", null, null);
     }
 
+    //获取所有的订单
+    @Override
+    public Map<String,Object> getAllOrders(Integer page,Integer limit) {
+        List<Orders> orders = orderMapper.getAllOrders();
+        for(Orders orders1: orders){
+            orders1.setOriginatorName(userMapper.getUserById(orders1.getOriginatorId()).getUsername());
+            if(orders1.getRecipientId()!= 0){
+                orders1.setRecipientName(userMapper.getUserById(orders1.getRecipientId()).getUsername());
+            }
+            
+        }
+        List<Orders> orders1 = null;
+        int page1 = orders.size()/limit;
+        if(orders.size() % limit !=0 && page1+1==page){
+            orders1 = orders.subList(page * limit - limit, orders.size());
+        }else {
+            orders1 = orders.subList(page * limit - limit, page * limit-1);
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("code",0);
+        map.put("msg","");
+        map.put("count",orders.size());
+        map.put("data",orders1);
+        return map;
+    }
+
     //获取搜索的订单
     @Override
     public List getUnfinishedSearchOrders(String type, String text) {
@@ -76,8 +104,10 @@ public class OrderServiceImpl implements OrderService {
     //发单人修改状态
     @Override
     public int originatorComplete(Orders orders) {
-        orders.setCompletionTime(DateUtil.getStringDate());
         orders.setOriginatorState("已完成");
+        if(orderMapper.getOrderById(orders.getId()).getRecipientState().equals("已完成")){
+            orders.setCompletionTime(DateUtil.getStringDate());
+        }
         return orderMapper.originatorComplete(orders);
     }
     
@@ -85,6 +115,32 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public int recipientComplete(Orders orders) {
         orders.setRecipientState("已完成");
+        if(orderMapper.getOrderById(orders.getId()).getOriginatorState().equals("已完成")){
+            orders.setCompletionTime(DateUtil.getStringDate());
+        }
         return orderMapper.recipientComplete(orders);
+    }
+
+    //通过id删除订单
+    @Override
+    public int delByOrdersId(int id) {
+        return orderMapper.delByOrdersId(id);
+    }
+
+    @Override
+    public List getOrdersAnalysis() {
+        List total = new ArrayList();
+        List finish = new ArrayList();
+        List time = new ArrayList();
+        List re = new ArrayList();
+        for(int i=0;i<orderMapper.getOrdersAnalysis().size();i++){
+            total.add(orderMapper.getOrdersAnalysis().get(i).getTotal());
+            finish.add(orderMapper.getOrdersAnalysis().get(i).getFinish());
+            time.add(orderMapper.getOrdersAnalysis().get(i).getTime());
+        }
+        re.add(total);
+        re.add(finish);
+        re.add(time);
+        return re;
     }
 }
